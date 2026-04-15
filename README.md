@@ -1,76 +1,93 @@
 # browser-task-copilot
 
-Reference repository for building browser-executing agents with explicit safety boundaries, approval gates, replay artifacts, and deterministic policy evaluation.
+FastAPI control plane for guarded browser task execution.  
+v1 uses a simulated runner (no real browser runtime) and focuses on policy gating, approval flow, lifecycle transitions, and replay artifact emission.
 
-This repo focuses on control-plane and contract design. It is intentionally implementation-agnostic so the same contracts can back a local Playwright runner, a remote browser pool, or a VM-isolated computer-use runtime.
+## Current implementation
 
-## Repository map
+- Policy evaluation from YAML profiles in `policies/*.yaml` (`first-match-wins`).
+- Typed models for tasks, approvals, policy requests, replay events, and terminal results.
+- In-memory task store and deterministic task state machine.
+- Simulated execution engine that produces replay timeline and artifact URIs.
+- Approval TTL enforcement and role-based approval checks.
 
-- `docs/architecture.md`: component and data-flow model
-- `docs/policy-spec.md`: policy schema and evaluation semantics
-- `docs/demo-flow.md`: end-to-end execution walkthrough
-- `docs/execution-matrix.md`: execution matrix and failure drills
-- `examples/*.json`: canonical API payloads and replay records
-- `policies/*.yaml`: policy profiles with different strictness
-- `configs/runtime.example.yaml`: runtime knobs for limits/timeouts
-- `assets/README.md`: expected screenshots and terminal captures
+## Project layout
 
-## Core contracts
+- `src/browser_task_copilot/main.py`: FastAPI app and endpoints
+- `src/browser_task_copilot/models.py`: typed domain/API models
+- `src/browser_task_copilot/policy.py`: policy loader and rule evaluator
+- `src/browser_task_copilot/service.py`: task orchestration and state machine
+- `src/browser_task_copilot/store.py`: in-memory persistence layer
+- `tests/`: policy, approval timeout, and lifecycle tests
+- `docs/implementation-plan.md`: execution plan for this implementation
 
-The reference API surface is intentionally small:
+## Run locally (`uv` + Python 3.9)
+
+```bash
+uv sync --extra dev
+uv run uvicorn browser_task_copilot.main:app --app-dir src --reload
+```
+
+Health check:
+
+```bash
+curl -s http://127.0.0.1:8000/healthz
+```
+
+## API surface
 
 - `POST /api/tasks`
-- `POST /api/tasks/{id}/approve`
-- `GET /api/tasks/{id}`
-- `GET /api/tasks/{id}/replay`
+- `GET /api/tasks/{task_id}`
+- `POST /api/tasks/{task_id}/approve`
+- `GET /api/tasks/{task_id}/replay`
 - `POST /api/policies/evaluate`
 
-Canonical request and event examples:
+## Example flow
 
-- task creation: `examples/task-create.json`
-- approval response: `examples/approval-event.json`
-- terminal task result: `examples/task-result.json`
-- replay metadata: `examples/replay-record.json`
+Create a task:
 
-## Safety model
+```bash
+curl -sS http://127.0.0.1:8000/api/tasks \
+  -H "content-type: application/json" \
+  -d @examples/task-create.json
+```
 
-Execution is constrained by policy, not prompts.
+If status is `waiting_approval`, approve the pending action:
 
-- Policy engine evaluates each proposed action before side effects.
-- Sensitive operations require human approval with TTL.
-- Denials and overrides are appended to immutable audit records.
-- Session replay links each DOM action to policy and approval context.
+```bash
+curl -sS http://127.0.0.1:8000/api/tasks/<task_id>/approve \
+  -H "content-type: application/json" \
+  -d @examples/approval-event.json
+```
 
-See `docs/policy-spec.md` and `policies/default-policy.yaml`.
+Fetch task and replay:
 
-## Quick walkthrough
+```bash
+curl -sS http://127.0.0.1:8000/api/tasks/<task_id>
+curl -sS http://127.0.0.1:8000/api/tasks/<task_id>/replay
+```
 
-1. Submit a task payload from `examples/task-create.json`.
-2. Runner emits proposed actions and requests approval if required.
-3. Reviewer submits an approval payload from `examples/approval-event.json`.
-4. Runtime executes allowed steps and emits `examples/task-result.json`.
-5. Replay endpoint exposes action timeline and screenshots metadata.
+## Policy notes
 
-`docs/demo-flow.md` contains a full happy-path plus failure injection.
+Profiles:
 
-## Failure handling
+- `default-policy.yaml`: allows internal navigation/read actions, gates writes.
+- `high-risk-policy.yaml`: tighter profile, requires approval for click/input.
 
-The reference model handles:
+Supported decisions:
 
-- selector drift (`ElementNotFound`)
-- navigation timeout (`NavigationTimeout`)
-- policy denial (`PolicyDenied`)
-- approval timeout (`ApprovalExpired`)
-- side-effect conflict (`IdempotencyConflict`)
+- `allow`
+- `deny`
+- `require_approval`
 
-Recovery procedures and retry envelopes are listed in `docs/execution-matrix.md`.
+## Tests
 
-## Non-goals
+```bash
+uv run pytest
+```
 
-- generic chat interface design
-- prompt cataloging
-- vendor-specific orchestration lock-in
+Covered:
 
-## Screenshots and artifacts
-
-Store media in `assets/` using the conventions in `assets/README.md`.
+- policy decision paths
+- approval timeout handling
+- end-to-end lifecycle: create -> wait -> approve -> succeed
