@@ -1,0 +1,21 @@
+{
+  "task_id": "task_01JBRW7H42N3M6C5V8Q2",
+  "intent": "Locate account ACME-448 and increase credit limit from 2000 to 3000",
+  "target": {
+    "base_url": "https://ops.internal.example",
+    "workspace": "billing-admin"
+  },
+  "context": {
+    "tenant": "acme-prod",
+    "requester": "ops.engineer@example.com",
+    "tags": [
+      "billing",
+      "credit-limit"
+    ]
+  },
+  "constraints": {
+    "max_actions": 25,
+    "task_timeout_seconds": 420,
+    "allow_file_downloads": false
+  }
+}

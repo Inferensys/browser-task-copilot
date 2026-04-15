@@ -1,0 +1,13 @@
+{
+  "task_id": "task_01JBRW7H42N3M6C5V8Q2",
+  "action_id": "action_submit_credit_limit_change",
+  "decision": "approved",
+  "approved_by": {
+    "user_id": "u_00184",
+    "email": "lead-finops@example.com",
+    "role": "finops_lead"
+  },
+  "expires_at": "2026-04-15T14:20:00Z",
+  "reason": "Change requested in ticket FIN-992 with manager approval",
+  "signature": "sha256:77e8b6f56b69d1007ba0d3d324c4a8f3b3e0df96f9c14d2e8f2ddf10c31a61d1"
+}

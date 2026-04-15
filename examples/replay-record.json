@@ -1,0 +1,26 @@
+{
+  "replay_id": "replay_83ae1d5f",
+  "task_id": "task_01JBRW7H42N3M6C5V8Q2",
+  "timeline": [
+    {
+      "t": "2026-04-15T14:03:15Z",
+      "action_id": "action_open_account_search",
+      "decision": "allow",
+      "screenshot": "assets/browser-run-01.png"
+    },
+    {
+      "t": "2026-04-15T14:03:46Z",
+      "action_id": "action_submit_credit_limit_change",
+      "decision": "require_approval",
+      "approval_id": "apr_01JBRW8D5WY9K",
+      "screenshot": "assets/browser-run-02.png"
+    },
+    {
+      "t": "2026-04-15T14:03:55Z",
+      "action_id": "action_submit_credit_limit_change",
+      "decision": "approved",
+      "approved_by": "lead-finops@example.com",
+      "screenshot": "assets/browser-run-03.png"
+    }
+  ]
+}

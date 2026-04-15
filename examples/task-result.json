@@ -1,0 +1,25 @@
+{
+  "task_id": "task_01JBRW7H42N3M6C5V8Q2",
+  "status": "succeeded",
+  "started_at": "2026-04-15T14:03:11Z",
+  "completed_at": "2026-04-15T14:04:02Z",
+  "summary": {
+    "actions_total": 13,
+    "actions_executed": 12,
+    "actions_skipped": 1,
+    "policy_denials": 0,
+    "approvals_used": 1
+  },
+  "side_effects": [
+    {
+      "type": "form_submit",
+      "url": "https://ops.internal.example/accounts/ACME-448/credit",
+      "idempotency_key": "idem_5ff4b8207b89"
+    }
+  ],
+  "artifacts": {
+    "replay_id": "replay_83ae1d5f",
+    "trace_uri": "s3://browsers/replay_83ae1d5f/trace.zip",
+    "screenshots_prefix": "s3://browsers/replay_83ae1d5f/screenshots/"
+  }
+}
