@@ -1,0 +1,43 @@
+version: "1.0"
+
+defaults:
+  decision: deny
+  task_timeout_seconds: 420
+  approval_ttl_seconds: 300
+  max_actions: 40
+
+approvals:
+  roles_allowed:
+    - finops_lead
+    - support_manager
+  scope: action
+
+rules:
+  - name: allow-navigation-internal
+    when:
+      action.type: navigate
+      target.url_prefix: "https://ops.internal.example/"
+    then:
+      decision: allow
+
+  - name: allow-read-actions
+    when:
+      action.type_in:
+        - read_dom
+        - click
+    then:
+      decision: allow
+
+  - name: gate-writes
+    when:
+      action.type_in:
+        - type
+        - submit_form
+    then:
+      decision: require_approval
+
+  - name: deny-uploads
+    when:
+      action.type: upload
+    then:
+      decision: deny

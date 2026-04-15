@@ -1,0 +1,43 @@
+version: "1.0"
+
+defaults:
+  decision: deny
+  task_timeout_seconds: 300
+  approval_ttl_seconds: 120
+  max_actions: 20
+
+approvals:
+  roles_allowed:
+    - finops_lead
+  scope: action
+  require_reason: true
+
+rules:
+  - name: allow-navigation-internal
+    when:
+      action.type: navigate
+      target.url_prefix: "https://ops.internal.example/"
+    then:
+      decision: allow
+
+  - name: require-approval-on-click
+    when:
+      action.type: click
+    then:
+      decision: require_approval
+
+  - name: require-approval-on-input
+    when:
+      action.type_in:
+        - type
+        - submit_form
+    then:
+      decision: require_approval
+
+  - name: deny-downloads-and-uploads
+    when:
+      action.type_in:
+        - download
+        - upload
+    then:
+      decision: deny

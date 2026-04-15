@@ -1,0 +1,27 @@
+runner:
+  browser_engine: chromium
+  headless: true
+  viewport:
+    width: 1440
+    height: 900
+  network_egress_allowlist:
+    - ops.internal.example
+
+timeouts:
+  navigate_ms: 20000
+  selector_ms: 5000
+  action_ms: 12000
+
+replay:
+  capture_screenshots: true
+  capture_dom_snapshot: true
+  redact_selectors:
+    - 'input[name="password"]'
+    - 'input[name="otp"]'
+
+queue:
+  max_concurrent_tasks: 8
+  retry_limit: 2
+
+policies:
+  active_profile: policies/default-policy.yaml
