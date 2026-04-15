@@ -60,3 +60,25 @@ def test_task_lifecycle_waits_for_approval_and_succeeds() -> None:
     replay = replay_resp.json()
     assert replay["task_id"] == task_id
     assert len(replay["timeline"]) >= 4
+
+
+def test_read_only_task_succeeds_with_deterministic_planner_trace() -> None:
+    client = TestClient(create_app())
+
+    create_resp = client.post(
+        "/api/tasks",
+        json={
+            "intent": "Open account ACME-448 and summarize the current credit limit and any hold flags without making changes",
+            "target": {
+                "base_url": "https://ops.internal.example",
+                "workspace": "billing-admin",
+            },
+            "policy_profile": "default",
+        },
+    )
+    assert create_resp.status_code == 200
+    body = create_resp.json()
+    assert body["status"] == "succeeded"
+    assert body["planner"]["mode"] == "deterministic"
+    assert len(body["actions"]) == 2
+    assert body["actions"][1]["type"] == "read_dom"

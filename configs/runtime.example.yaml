@@ -1,3 +1,10 @@
+planner:
+  provider: deterministic
+  azure:
+    endpoint_env: AZURE_OPENAI_ENDPOINT
+    api_version: "2025-04-01-preview"
+    deployment: gpt-5-mini
+
 runner:
   browser_engine: chromium
   headless: true

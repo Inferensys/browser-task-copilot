@@ -1,0 +1,23 @@
+{
+  "task_id": "live_external_export_001",
+  "intent": "Open the vendor settlement portal and export the current chargeback CSV for review.",
+  "target": {
+    "base_url": "https://vendor-portal.example",
+    "workspace": "settlements"
+  },
+  "context": {
+    "tenant": "acme-prod",
+    "requester": "ops.engineer@example.com",
+    "tags": [
+      "vendor",
+      "export",
+      "demo"
+    ]
+  },
+  "constraints": {
+    "max_actions": 6,
+    "task_timeout_seconds": 420,
+    "allow_file_downloads": true
+  },
+  "policy_profile": "default"
+}

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
-from typing import Callable, List, Optional, Tuple
+from typing import Callable, Optional
 from uuid import uuid4
 
 from .models import (
@@ -20,6 +20,7 @@ from .models import (
     TaskStatus,
     TaskSummary,
 )
+from .planner import ActionPlanner
 from .policy import PolicyEngine, PolicyLoader, PolicyNotFoundError
 from .store import InMemoryTaskStore
 
@@ -46,17 +47,19 @@ class TaskService:
         store: InMemoryTaskStore,
         policy_loader: PolicyLoader,
         policy_engine: PolicyEngine,
+        planner: ActionPlanner,
         now_provider: Optional[Callable[[], datetime]] = None,
     ) -> None:
         self._store = store
         self._policy_loader = policy_loader
         self._policy_engine = policy_engine
+        self._planner = planner
         self._now_provider = now_provider or (lambda: datetime.now(timezone.utc))
 
     def create_task(self, req: TaskCreateRequest) -> TaskResponse:
         task_id = req.task_id or f"task_{uuid4().hex[:16]}"
         now = self._now_provider()
-        actions = self._build_action_plan(task_id, req)
+        plan = self._planner.plan(task_id, req)
         replay_id = f"replay_{uuid4().hex[:8]}"
         task = TaskRecord(
             task_id=task_id,
@@ -65,8 +68,9 @@ class TaskService:
             status=TaskStatus.PENDING,
             created_at=now,
             context=req.context,
-            actions=actions,
-            summary=TaskSummary(actions_total=len(actions)),
+            actions=plan.actions,
+            planner=plan.trace,
+            summary=TaskSummary(actions_total=len(plan.actions)),
             artifacts=TaskArtifacts(
                 replay_id=replay_id,
                 trace_uri=f"memory://{replay_id}/trace.json",
@@ -225,35 +229,6 @@ class TaskService:
             raise TaskNotFoundError(task_id)
         return task
 
-    def _build_action_plan(self, task_id: str, req: TaskCreateRequest) -> List[ProposedAction]:
-        base = req.target.base_url.rstrip("/")
-        actions: List[ProposedAction] = [
-            ProposedAction(
-                action_id=f"{task_id}_open_workspace",
-                type="navigate",
-                target={"url": f"{base}/", "workspace": req.target.workspace},
-            ),
-            ProposedAction(
-                action_id=f"{task_id}_open_account_search",
-                type="click",
-                target={"selector": "#account-search"},
-            ),
-            ProposedAction(
-                action_id=f"{task_id}_submit_change",
-                type="submit_form",
-                target={"url": f"{base}/accounts/update-credit-limit"},
-            ),
-        ]
-        if "upload" in req.intent.lower():
-            actions.append(
-                ProposedAction(
-                    action_id=f"{task_id}_upload_attachment",
-                    type="upload",
-                    target={"selector": "input[type=file]"},
-                )
-            )
-        return actions
-
     def _to_response(self, task: TaskRecord) -> TaskResponse:
         return TaskResponse(
             task_id=task.task_id,
@@ -261,6 +236,8 @@ class TaskService:
             created_at=task.created_at,
             started_at=task.started_at,
             completed_at=task.completed_at,
+            actions=task.actions,
+            planner=task.planner,
             pending_approval=task.pending_approval,
             summary=task.summary,
             artifacts=task.artifacts,

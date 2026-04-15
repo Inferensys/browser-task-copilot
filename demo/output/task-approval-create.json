@@ -1,0 +1,82 @@
+{
+  "task_id": "live_mutation_001",
+  "status": "waiting_approval",
+  "created_at": "2026-04-15T19:44:53.552035Z",
+  "started_at": "2026-04-15T19:45:02.566009Z",
+  "completed_at": null,
+  "actions": [
+    {
+      "action_id": "live_mutation_001_open_dashboard",
+      "type": "navigate",
+      "target": {
+        "url": "https://ops.internal.example/"
+      },
+      "metadata": {
+        "description": "Navigate to the billing admin workspace dashboard root"
+      }
+    },
+    {
+      "action_id": "live_mutation_001_search_account",
+      "type": "read_dom",
+      "target": {},
+      "metadata": {
+        "description": "Find and interact with the account search field and results to locate ACME-448; inspect DOM to determine selectors and presence of account row"
+      }
+    },
+    {
+      "action_id": "live_mutation_001_open_account",
+      "type": "click",
+      "target": {},
+      "metadata": {
+        "description": "Click the account ACME-448 from the results to open the account details page"
+      }
+    },
+    {
+      "action_id": "live_mutation_001_edit_spend_cap",
+      "type": "read_dom",
+      "target": {},
+      "metadata": {
+        "description": "Locate the spending cap edit controls and the form for updating cap and reason"
+      }
+    },
+    {
+      "action_id": "live_mutation_001_submit_update",
+      "type": "submit_form",
+      "target": {},
+      "metadata": {
+        "description": "Submit the spending cap update form setting cap to 3000 and reason 'temporary procurement exception', include tags and requester info if available in form"
+      }
+    }
+  ],
+  "planner": {
+    "mode": "azure",
+    "provider": "azure-openai",
+    "model": "gpt-5-mini",
+    "confidence": 0.8,
+    "rationale": "Standard admin console flow: navigate to accounts list, locate account ACME-448 via search/filter, open account details, edit spending cap, provide reason, and submit the update. Use read_dom to inspect pages and a single submit_form for the update. Keep steps minimal and within max_actions.",
+    "warnings": []
+  },
+  "pending_approval": {
+    "action_id": "live_mutation_001_submit_update",
+    "expires_at": "2026-04-15T19:50:02.568962Z",
+    "roles_allowed": [
+      "finops_lead",
+      "support_manager"
+    ],
+    "requested_at": "2026-04-15T19:45:02.568962Z"
+  },
+  "summary": {
+    "actions_total": 5,
+    "actions_executed": 4,
+    "actions_skipped": 0,
+    "policy_denials": 0,
+    "approvals_used": 0
+  },
+  "artifacts": {
+    "replay_id": "replay_aa50648a",
+    "trace_uri": "memory://replay_aa50648a/trace.json",
+    "screenshots_prefix": "memory://replay_aa50648a/screenshots/"
+  },
+  "error_code": null,
+  "error_message": null
+}

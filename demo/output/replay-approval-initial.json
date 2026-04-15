@@ -1,0 +1,51 @@
+{
+  "replay_id": "replay_aa50648a",
+  "task_id": "live_mutation_001",
+  "timeline": [
+    {
+      "t": "2026-04-15T19:45:02.568907Z",
+      "action_id": "live_mutation_001_open_dashboard",
+      "decision": "allow",
+      "screenshot": "memory://replay_aa50648a/screenshots/001.png",
+      "approval_id": null,
+      "approved_by": null,
+      "detail": "matched rule 'allow-navigation-internal'"
+    },
+    {
+      "t": "2026-04-15T19:45:02.568940Z",
+      "action_id": "live_mutation_001_search_account",
+      "decision": "allow",
+      "screenshot": "memory://replay_aa50648a/screenshots/002.png",
+      "approval_id": null,
+      "approved_by": null,
+      "detail": "matched rule 'allow-read-actions'"
+    },
+    {
+      "t": "2026-04-15T19:45:02.568950Z",
+      "action_id": "live_mutation_001_open_account",
+      "decision": "allow",
+      "screenshot": "memory://replay_aa50648a/screenshots/003.png",
+      "approval_id": null,
+      "approved_by": null,
+      "detail": "matched rule 'allow-read-actions'"
+    },
+    {
+      "t": "2026-04-15T19:45:02.568956Z",
+      "action_id": "live_mutation_001_edit_spend_cap",
+      "decision": "allow",
+      "screenshot": "memory://replay_aa50648a/screenshots/004.png",
+      "approval_id": null,
+      "approved_by": null,
+      "detail": "matched rule 'allow-read-actions'"
+    },
+    {
+      "t": "2026-04-15T19:45:02.568962Z",
+      "action_id": "live_mutation_001_submit_update",
+      "decision": "require_approval",
+      "screenshot": "memory://replay_aa50648a/screenshots/005.png",
+      "approval_id": null,
+      "approved_by": null,
+      "detail": "matched rule 'gate-writes'"
+    }
+  ]
+}

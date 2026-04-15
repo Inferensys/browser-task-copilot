@@ -1,0 +1,76 @@
+{
+  "task_id": "live_external_export_001",
+  "status": "failed",
+  "created_at": "2026-04-15T19:39:51.144788Z",
+  "started_at": "2026-04-15T19:41:33.184448Z",
+  "completed_at": "2026-04-15T19:41:33.190079Z",
+  "actions": [
+    {
+      "action_id": "live_external_export_001_open_home",
+      "type": "navigate",
+      "target": {
+        "url": "https://vendor-portal.example/"
+      },
+      "metadata": {
+        "description": "Open the vendor portal home at the provided base_url."
+      }
+    },
+    {
+      "action_id": "live_external_export_001_open_settlements_workspace",
+      "type": "navigate",
+      "target": {
+        "url": "https://vendor-portal.example/"
+      },
+      "metadata": {
+        "description": "Navigate to the settlements workspace or page, using likely paths or workspace selector under base_url/workspaces/settlements or /settlements."
+      }
+    },
+    {
+      "action_id": "live_external_export_001_inspect_chargebacks",
+      "type": "read_dom",
+      "target": {},
+      "metadata": {
+        "description": "Read the DOM of the settlements or chargebacks page to locate the chargeback table and export/download CSV controls (buttons/links/forms)."
+      }
+    },
+    {
+      "action_id": "live_external_export_001_click_export_csv",
+      "type": "click",
+      "target": {},
+      "metadata": {
+        "description": "Click the 'Export CSV' or 'Download' button/link for the chargebacks/chargeback report."
+      }
+    },
+    {
+      "action_id": "live_external_export_001_download_csv",
+      "type": "download",
+      "target": {},
+      "metadata": {
+        "description": "Download the resulting CSV file from the triggered link or form submission."
+      }
+    }
+  ],
+  "planner": {
+    "mode": "azure",
+    "provider": "azure-openai",
+    "model": "gpt-5-mini",
+    "confidence": 0.83,
+    "rationale": "Portal likely has a settlements workspace with a chargebacks page and CSV export. Plan: navigate to base, find 'Settlements' or workspace, read DOM to locate chargebacks/export controls, click export, then download CSV. Keep actions minimal and use read_dom to inspect before click/submit. Single submit or download action if available.",
+    "warnings": []
+  },
+  "pending_approval": null,
+  "summary": {
+    "actions_total": 5,
+    "actions_executed": 0,
+    "actions_skipped": 0,
+    "policy_denials": 1,
+    "approvals_used": 0
+  },
+  "artifacts": {
+    "replay_id": "replay_349465e5",
+    "trace_uri": "memory://replay_349465e5/trace.json",
+    "screenshots_prefix": "memory://replay_349465e5/screenshots/"
+  },
+  "error_code": "PolicyDenied",
+  "error_message": "action 'live_external_export_001_open_home' denied by policy (defaults)"
+}

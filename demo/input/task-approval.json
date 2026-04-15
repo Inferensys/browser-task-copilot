@@ -1,0 +1,23 @@
+{
+  "task_id": "live_mutation_001",
+  "intent": "Locate account ACME-448 and update the account spending cap from 2000 to 3000 with reason temporary procurement exception, then submit the form.",
+  "target": {
+    "base_url": "https://ops.internal.example",
+    "workspace": "billing-admin"
+  },
+  "context": {
+    "tenant": "acme-prod",
+    "requester": "ops.engineer@example.com",
+    "tags": [
+      "billing",
+      "threshold",
+      "demo"
+    ]
+  },
+  "constraints": {
+    "max_actions": 6,
+    "task_timeout_seconds": 420,
+    "allow_file_downloads": false
+  },
+  "policy_profile": "default"
+}

@@ -1,0 +1,55 @@
+[
+  {
+    "name": "approval",
+    "task_id": "live_mutation_001",
+    "status": "waiting_approval",
+    "planner_mode": "azure",
+    "planner_model": "gpt-5-mini",
+    "planner_confidence": 0.8,
+    "actions": [
+      "navigate",
+      "read_dom",
+      "click",
+      "read_dom",
+      "submit_form"
+    ],
+    "pending_action_id": "live_mutation_001_submit_update",
+    "approval_rounds": 1,
+    "final_status": "succeeded"
+  },
+  {
+    "name": "denied",
+    "task_id": "live_external_export_001",
+    "status": "failed",
+    "planner_mode": "azure",
+    "planner_model": "gpt-5-mini",
+    "planner_confidence": 0.83,
+    "actions": [
+      "navigate",
+      "navigate",
+      "read_dom",
+      "click",
+      "download"
+    ],
+    "pending_action_id": null,
+    "final_status": "failed"
+  },
+  {
+    "name": "readonly",
+    "task_id": "live_readonly_001",
+    "status": "succeeded",
+    "planner_mode": "azure",
+    "planner_model": "gpt-5-mini",
+    "planner_confidence": 0.75,
+    "actions": [
+      "navigate",
+      "read_dom",
+      "click",
+      "read_dom",
+      "click",
+      "read_dom"
+    ],
+    "pending_action_id": null,
+    "final_status": "succeeded"
+  }
+]

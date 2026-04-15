@@ -1,0 +1,23 @@
+{
+  "task_id": "live_readonly_001",
+  "intent": "Navigate through billing-admin to account ACME-448, inspect the overview and risk note sections, and return the current credit limit, hold flags, and last risk review note. This is read-only.",
+  "target": {
+    "base_url": "https://ops.internal.example",
+    "workspace": "billing-admin"
+  },
+  "context": {
+    "tenant": "acme-prod",
+    "requester": "ops.engineer@example.com",
+    "tags": [
+      "billing",
+      "read-only",
+      "demo"
+    ]
+  },
+  "constraints": {
+    "max_actions": 6,
+    "task_timeout_seconds": 420,
+    "allow_file_downloads": false
+  },
+  "policy_profile": "default"
+}

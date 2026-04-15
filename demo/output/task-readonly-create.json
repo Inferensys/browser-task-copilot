@@ -1,0 +1,82 @@
+{
+  "task_id": "live_readonly_001",
+  "status": "succeeded",
+  "created_at": "2026-04-15T19:49:54.257408Z",
+  "started_at": "2026-04-15T19:52:05.066307Z",
+  "completed_at": "2026-04-15T19:52:05.071415Z",
+  "actions": [
+    {
+      "action_id": "live_readonly_001_navigate_root",
+      "type": "navigate",
+      "target": {
+        "url": "https://ops.internal.example/"
+      },
+      "metadata": {
+        "description": "Open the ops control plane root at https://ops.internal.example/ to locate the billing-admin workspace."
+      }
+    },
+    {
+      "action_id": "live_readonly_001_read_dom_home",
+      "type": "read_dom",
+      "target": {},
+      "metadata": {
+        "description": "Read the landing page DOM to find the 'billing-admin' workspace link or tile (workspace list or navigation)."
+      }
+    },
+    {
+      "action_id": "live_readonly_001_click_workspace",
+      "type": "click",
+      "target": {},
+      "metadata": {
+        "description": "Click the 'billing-admin' workspace link/tile to enter the billing-admin workspace."
+      }
+    },
+    {
+      "action_id": "live_readonly_001_read_dom_workspace",
+      "type": "read_dom",
+      "target": {},
+      "metadata": {
+        "description": "Read the workspace DOM to find account search, accounts list, or navigation to 'ACME-448'."
+      }
+    },
+    {
+      "action_id": "live_readonly_001_click_account",
+      "type": "click",
+      "target": {},
+      "metadata": {
+        "description": "Click the account entry or link for 'ACME-448' to open the account detail page."
+      }
+    },
+    {
+      "action_id": "live_readonly_001_read_dom_account",
+      "type": "read_dom",
+      "target": {},
+      "metadata": {
+        "description": "Read the account detail page DOM and extract: current credit limit (Overview), any hold flags (Overview or Status), and the most recent risk review note (Risk / Risk notes section)."
+      }
+    }
+  ],
+  "planner": {
+    "mode": "azure",
+    "provider": "azure-openai",
+    "model": "gpt-5-mini",
+    "confidence": 0.75,
+    "rationale": "Perform read-only inspection using the portal root and workspace navigation. Prefer read_dom to discover stable links, and use clicks to open the workspace and account detail pages. Keep to six actions to meet the constraint.",
+    "warnings": []
+  },
+  "pending_approval": null,
+  "summary": {
+    "actions_total": 6,
+    "actions_executed": 6,
+    "actions_skipped": 0,
+    "policy_denials": 0,
+    "approvals_used": 0
+  },
+  "artifacts": {
+    "replay_id": "replay_14d92f0b",
+    "trace_uri": "memory://replay_14d92f0b/trace.json",
+    "screenshots_prefix": "memory://replay_14d92f0b/screenshots/"
+  },
+  "error_code": null,
+  "error_message": null
+}

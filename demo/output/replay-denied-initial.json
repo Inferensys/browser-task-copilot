@@ -1,0 +1,15 @@
+{
+  "replay_id": "replay_349465e5",
+  "task_id": "live_external_export_001",
+  "timeline": [
+    {
+      "t": "2026-04-15T19:41:33.190049Z",
+      "action_id": "live_external_export_001_open_home",
+      "decision": "deny",
+      "screenshot": "memory://replay_349465e5/screenshots/001.png",
+      "approval_id": null,
+      "approved_by": null,
+      "detail": "no rule matched; using policy defaults"
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "replay_id": "replay_14d92f0b",
+  "task_id": "live_readonly_001",
+  "timeline": [
+    {
+      "t": "2026-04-15T19:52:05.071348Z",
+      "action_id": "live_readonly_001_navigate_root",
+      "decision": "allow",
+      "screenshot": "memory://replay_14d92f0b/screenshots/001.png",
+      "approval_id": null,
+      "approved_by": null,
+      "detail": "matched rule 'allow-navigation-internal'"
+    },
+    {
+      "t": "2026-04-15T19:52:05.071390Z",
+      "action_id": "live_readonly_001_read_dom_home",
+      "decision": "allow",
+      "screenshot": "memory://replay_14d92f0b/screenshots/002.png",
+      "approval_id": null,
+      "approved_by": null,
+      "detail": "matched rule 'allow-read-actions'"
+    },
+    {
+      "t": "2026-04-15T19:52:05.071400Z",
+      "action_id": "live_readonly_001_click_workspace",
+      "decision": "allow",
+      "screenshot": "memory://replay_14d92f0b/screenshots/003.png",
+      "approval_id": null,
+      "approved_by": null,
+      "detail": "matched rule 'allow-read-actions'"
+    },
+    {
+      "t": "2026-04-15T19:52:05.071405Z",
+      "action_id": "live_readonly_001_read_dom_workspace",
+      "decision": "allow",
+      "screenshot": "memory://replay_14d92f0b/screenshots/004.png",
+      "approval_id": null,
+      "approved_by": null,
+      "detail": "matched rule 'allow-read-actions'"
+    },
+    {
+      "t": "2026-04-15T19:52:05.071409Z",
+      "action_id": "live_readonly_001_click_account",
+      "decision": "allow",
+      "screenshot": "memory://replay_14d92f0b/screenshots/005.png",
+      "approval_id": null,
+      "approved_by": null,
+      "detail": "matched rule 'allow-read-actions'"
+    },
+    {
+      "t": "2026-04-15T19:52:05.071412Z",
+      "action_id": "live_readonly_001_read_dom_account",
+      "decision": "allow",
+      "screenshot": "memory://replay_14d92f0b/screenshots/006.png",
+      "approval_id": null,
+      "approved_by": null,
+      "detail": "matched rule 'allow-read-actions'"
+    }
+  ]
+}

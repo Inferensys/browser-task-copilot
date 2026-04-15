@@ -31,6 +31,11 @@ class TaskStatus(str, Enum):
     FAILED = "failed"
 
 
+class PlannerMode(str, Enum):
+    DETERMINISTIC = "deterministic"
+    AZURE = "azure"
+
+
 class TaskTarget(BaseModel):
     base_url: str
     workspace: Optional[str] = None
@@ -62,6 +67,15 @@ class ProposedAction(BaseModel):
     type: ActionType
     target: Dict[str, Any] = Field(default_factory=dict)
     metadata: Dict[str, Any] = Field(default_factory=dict)
+
+
+class PlannerTrace(BaseModel):
+    mode: PlannerMode
+    provider: str
+    model: Optional[str] = None
+    confidence: Optional[float] = None
+    rationale: Optional[str] = None
+    warnings: List[str] = Field(default_factory=list)
 
 
 class PolicyDefaults(BaseModel):
@@ -170,6 +184,7 @@ class TaskRecord(BaseModel):
     completed_at: Optional[datetime] = None
     context: TaskContext = Field(default_factory=TaskContext)
     actions: List[ProposedAction] = Field(default_factory=list)
+    planner: Optional[PlannerTrace] = None
     next_action_index: int = 0
     pending_approval: Optional[PendingApproval] = None
     summary: TaskSummary = Field(default_factory=TaskSummary)
@@ -184,6 +199,8 @@ class TaskResponse(BaseModel):
     created_at: datetime
     started_at: Optional[datetime] = None
     completed_at: Optional[datetime] = None
+    actions: List[ProposedAction] = Field(default_factory=list)
+    planner: Optional[PlannerTrace] = None
     pending_approval: Optional[PendingApproval] = None
     summary: TaskSummary
     artifacts: Optional[TaskArtifacts] = None

@@ -1,55 +1,58 @@
 # Architecture Notes
 
-## Design goals
+## Implemented boundary
 
-- Keep control-plane contracts stable across execution backends.
-- Isolate browser side effects behind explicit policy + approval checks.
-- Produce replay and audit artifacts sufficient for post-incident analysis.
+This repository currently implements a control plane, not a full browser worker.
 
-## Logical components
+- Intent expansion can be deterministic or Azure-backed.
+- Policy evaluation is always local and deterministic.
+- Approval issuance and validation are always local and deterministic.
+- Execution is simulated by advancing a replay timeline rather than driving a browser session.
 
-1. Task API
-   - accepts task intent, constraints, and context handles
-   - creates task state machine instance
-2. Planner
-   - expands intent into candidate browser actions
-   - attaches confidence and risk labels per action
-3. Policy engine
-   - evaluates each candidate action against YAML policy
-   - returns `allow`, `deny`, or `require_approval`
-4. Approval service
-   - issues short-lived approval requests for gated actions
-   - validates approver identity and expiry
-5. Runner
-   - executes allowed actions against browser session
-   - reports checkpoints and captures replay artifacts
-6. Artifact store
-   - stores screenshots, action timeline, and policy decisions
-7. Audit writer
-   - appends immutable event log for all state transitions
+## Request flow
 
-## Task state machine
+1. `POST /api/tasks` receives intent, target, context, constraints, and policy profile.
+2. The planner expands intent into a typed action list.
+3. Each action is evaluated against the selected YAML policy.
+4. `allow` advances the replay timeline.
+5. `require_approval` pauses the task and creates a `PendingApproval`.
+6. `deny` fails the task immediately and records the denial in replay.
 
-- `queued`
-- `planning`
-- `awaiting_approval`
+## Domain objects
+
+- `TaskCreateRequest`: external API request for a new browser task.
+- `ProposedAction`: normalized planner output consumed by the policy engine.
+- `PlannerTrace`: provider, model, confidence, and rationale attached to the task record.
+- `ReplayRecord`: ordered list of policy and approval decisions for the task.
+
+## Task states
+
+- `pending`
 - `running`
-- `blocked_expired`
+- `waiting_approval`
 - `succeeded`
 - `failed`
 
-Transitions are event-driven and monotonic.
+The service does not expose intermediate planning-only states; planning happens inline during task creation.
 
-## Data contracts
+## Why the planner is isolated
 
-- Task request schema: `examples/task-create.json`
-- Approval schema: `examples/approval-event.json`
-- Task terminal schema: `examples/task-result.json`
-- Replay schema: `examples/replay-record.json`
+`service.py` owns lifecycle and policy mechanics. Planner implementations only return `PlanningResult`:
 
-## Security boundaries
+- `DeterministicActionPlanner` keeps tests stable and makes offline runs predictable.
+- `AzureActionPlanner` handles provider-specific prompting, tool calling, and normalization.
 
-- Browser sessions run in isolated worker scope.
-- Secrets are referenced by handle, never embedded in prompts.
-- Policy decisions are detached from model output and must pass explicit checks.
-- Approval tokens are one-time use and bound to `task_id + action_id`.
+This keeps provider logic out of the state machine and makes it straightforward to add another backend without rewriting approval or replay handling.
+
+## Replay model
+
+Replay entries capture:
+
+- action id
+- policy decision
+- approval id when relevant
+- approver identity when relevant
+- simulated screenshot URI
+- rule-match detail
+
+The URIs are placeholders for a future executor-backed artifact store.

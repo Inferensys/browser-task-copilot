@@ -4,6 +4,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
 
+from .config import Settings
 from .models import (
     ApprovalRequest,
     PolicyEvaluationRequest,
@@ -11,6 +12,7 @@ from .models import (
     TaskCreateRequest,
     TaskResponse,
 )
+from .planner import PlanningError, build_action_planner
 from .policy import PolicyEngine, PolicyLoader, PolicyNotFoundError
 from .service import (
     ApprovalExpiredError,
@@ -25,17 +27,19 @@ from .store import InMemoryTaskStore
 def create_app() -> FastAPI:
     app = FastAPI(title="browser-task-copilot", version="0.1.0")
     repo_root = Path(__file__).resolve().parents[2]
+    settings = Settings.from_env()
     policy_loader = PolicyLoader(repo_root / "policies")
     service = TaskService(
         store=InMemoryTaskStore(),
         policy_loader=policy_loader,
         policy_engine=PolicyEngine(),
+        planner=build_action_planner(settings),
     )
     app.state.task_service = service
 
     @app.get("/healthz")
     def healthz():
-        return {"ok": True}
+        return {"ok": True, "planner_mode": settings.provider_mode}
 
     @app.post("/api/tasks", response_model=TaskResponse)
     def create_task(payload: TaskCreateRequest):
@@ -43,6 +47,8 @@ def create_app() -> FastAPI:
             return service.create_task(payload)
         except PolicyNotFoundError as exc:
             raise HTTPException(status_code=404, detail=str(exc)) from exc
+        except PlanningError as exc:
+            raise HTTPException(status_code=502, detail=str(exc)) from exc
 
     @app.get("/api/tasks/{task_id}", response_model=TaskResponse)
     def get_task(task_id: str):

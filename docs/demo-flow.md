@@ -1,36 +1,42 @@
 # Demo Flow
 
-This flow uses contract artifacts in `examples/` and policies in `policies/`.
+The demo set in `demo/` was generated from the live Azure planner path and then evaluated by the local policy engine.
 
-## Happy path: guarded account update
+## Read-only inspection
 
-1. Create task
-   - request body: `examples/task-create.json`
-   - expected state: `planning`
-2. Policy evaluation
-   - read actions: `allow`
-   - write action (`submit_form`): `require_approval`
-   - expected state: `awaiting_approval`
-3. Submit approval
-   - request body: `examples/approval-event.json`
-   - expected state: `running`
-4. Runner completion
-   - terminal payload: `examples/task-result.json`
-   - expected state: `succeeded`
-5. Replay retrieval
-   - metadata file: `examples/replay-record.json`
-   - verify every side effect has policy and approval linkage
+- Input: `demo/input/task-readonly.json`
+- Task result: `demo/output/task-readonly-create.json`
+- Replay: `demo/output/replay-readonly-initial.json`
 
-## Failure path: approval timeout
+Observed behavior:
 
-1. Create task as above.
-2. Do not submit approval before `approval_ttl_seconds`.
-3. Runtime transitions to `blocked_expired`.
-4. Verify no write action executed.
+- planner emitted a six-step navigation and inspection plan
+- every action matched an allow rule
+- task completed without approval
 
-## Failure path: selector drift
+## Approval-gated mutation
 
-1. Inject DOM change for primary selector.
-2. Runner attempts fallback selector set.
-3. If fallback set exhausted, terminal error should be `ElementNotFound`.
-4. Replay includes attempt order and selector snapshot hashes.
+- Input: `demo/input/task-approval.json`
+- Initial task: `demo/output/task-approval-create.json`
+- Approval event: `demo/output/approve-approval-01.json`
+- Final task: `demo/output/task-approval-final.json`
+- Final replay: `demo/output/replay-approval-final.json`
+
+Observed behavior:
+
+- planner emitted a five-step mutation plan
+- navigation and discovery steps were allowed
+- the final `submit_form` action matched `gate-writes`
+- approval resumed execution and the task reached `succeeded`
+
+## Policy denial
+
+- Input: `demo/input/task-denied.json`
+- Task result: `demo/output/task-denied-create.json`
+- Replay: `demo/output/replay-denied-initial.json`
+
+Observed behavior:
+
+- planner emitted an external-portal export plan
+- first `navigate` action failed policy because no allow rule matched the external base URL
+- task terminated with `PolicyDenied`
